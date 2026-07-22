@@ -10,15 +10,6 @@
      ANALYTICS: pega aquí el snippet de Google Analytics 4 (GA4).
      Cada escaneo dispara el evento qr_scan con hotel y ciudad.
      ============================================================ -->
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4CCQG37SX4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-4CCQG37SX4');
-</script>
 <style>
   :root{
     --ink:#0F2540; --paper:#FAFBFC; --ok:#1E9E6A;
@@ -43,16 +34,18 @@
     color:#B9C6D6;text-transform:uppercase;gap:10px}
   .citySelect{appearance:none;-webkit-appearance:none;border:0;cursor:pointer;
     font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:12px;letter-spacing:1px;
-    color:#fff;background:rgba(255,255,255,.14);padding:5px 26px 5px 12px;border-radius:6px;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23B9C6D6' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");
-    background-repeat:no-repeat;background-position:right 9px center}
+    color:var(--ink);background:#FFFFFF;padding:6px 28px 6px 12px;border-radius:8px;
+    box-shadow:0 1px 3px rgba(0,0,0,.35);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%230F2540' stroke-width='1.8' fill='none'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 10px center}
   .citySelect:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
   .citySelect option{color:var(--ink)}
 
-  .courtesy{display:flex;align-items:center;gap:10px;margin:14px 2px 0;
-    color:var(--steel);font-size:12.5px}
-  .courtesy img{height:26px;width:auto;border-radius:4px}
-  .courtesy b{color:var(--ink);font-weight:600}
+  .courtesy{display:flex;align-items:center;gap:12px;margin:16px 2px 0;
+    background:#FFFFFF;border:1px solid var(--line);border-left:6px solid var(--ok);
+    border-radius:12px;padding:12px 14px;color:var(--steel);font-size:14px}
+  .courtesy img{height:40px;width:auto;border-radius:6px}
+  .courtesy b{color:var(--ink);font-weight:700;font-size:15px}
   .courtesy:empty{display:none}
 
   h1{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;
@@ -204,8 +197,14 @@ const CITIES = {
 };
 
 const HOTELS = {
-  /* ejemplo:  "casa-blue": { name:"Casa Blue Business & Hotel", city:"CTG", logo:"https://.../logo.png" }, */
-  "demo": { name:"Hotel Demo", city:"CTG" }
+  /* Campos por hotel:
+     name  = como aparece en "Cortes\u00eda de ..."
+     city  = su aeropuerto (el QR abre directo ah\u00ed)
+     logo  = OPCIONAL: nombre del archivo del logo subido a este mismo
+             repositorio (ej: "ghl.png") o una URL completa https://...
+     color = OPCIONAL: color de marca del hotel (franja del banner)      */
+  "demo": { name:"Hotel Demo", city:"CTG" },
+  "ghl":  { name:"GHL Hoteles", city:"CTG", logo:"ghl.png", color:"#003057" }
 };
 
 const I18N = {
@@ -275,8 +274,9 @@ function render(){
 
   const co = document.getElementById("courtesy");
   if (hotel) {
-    co.innerHTML = (hotel.logo ? `<img src="${hotel.logo}" alt="">` : "") +
+    co.innerHTML = (hotel.logo ? `<img src="${hotel.logo}" alt="" onerror="this.style.display='none'">` : "") +
       `<span>${t.courtesy} <b>${hotel.name}</b></span>`;
+    co.style.borderLeftColor = hotel.color || "";
   } else if (hotelKey) {
     co.innerHTML = `<span>${t.courtesy} <b>${decodeURIComponent(hotelKey).replace(/[-_]/g," ")}</b></span>`;
   } else { co.innerHTML = ""; }
